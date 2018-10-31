@@ -14,9 +14,9 @@ class Process:
         
     #operator overloading of less than operator    
     def __lt__(self, other):
-        pass
+        return self.priority < self.priority
     
-    #operator overloading for printing symbol
+    #operator overloading for printing process
     def __str__(self):
         return str(self.arrivalTime) +" "+str(self.burstTime)+ " "+str(self.priority)+"\n"
     
