@@ -6,15 +6,22 @@ Created on Wed Oct 31 20:04:38 2018
 """
 
 class Process:
-    def __init__(self,arrivaltime,bursttime,priority):
+    def __init__(self,no,arrivaltime,bursttime,priority):
+        self.ID=no
         self.arrivalTime=arrivaltime
         self.burstTime=bursttime
         self.priority=priority
+        self.WT=0    #waiting time
+        self.TAT=0   #turnaround time
+        self.WTAT=0  #weighted turn around time
         
         
     #operator overloading of less than operator    
     def __lt__(self, other):
-        return self.priority < self.priority
+        return self.arrivalTime < self.arrivalTime
+    
+    
+    
     
     #operator overloading for printing process
     def __str__(self):

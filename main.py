@@ -6,5 +6,12 @@ Created on Wed Oct 31 21:22:58 2018
 """
 
 import processgenerator as pg
-
-pg.Generator("input.txt","output.txt")
+#import process as pr
+from operator import attrgetter
+gen=pg.Generator("input.txt")
+#gen.Processes.sort(key=attrgetter('priority'),reverse=True)  # this one works alone i think cause sort is stable
+#gen.Processes.sort(key=attrgetter('priority','ID'),reverse=True) #sort by priority then ID but this would reverse the id also
+gen.Processes.sort(key=attrgetter('ID')) # sort on secandry key first 
+gen.Processes.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
+for i in range (gen.n):
+    print (gen.Processes[i])
