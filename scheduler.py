@@ -18,12 +18,23 @@ def ReadFile(inputfile):
             processes.append(pr.Process(i-1,int(float(info[0])*1000),int(float(info[1])*1000),int(info[2])))
     return processes
             
+def OutputFile(Processes,AvgTAT,AvgWTAT):
+    with open ("STATS.txt",'w') as wf:
+        for i in range (len(Processes)):
+            wf.write(str(Processes[i].ID)+" "+str(Processes[i].WT)+" "+str(Processes[i].TAT)+" "+str(Processes[i].WTAT)+"\n")
+        wf.write(str(AvgTAT)+"\n")
+        wf.write(str(AvgWTAT)+"\n")
+        
             
             
         
         
 processes=ReadFile("ProcessesInfo.txt")
-NewProcesses,AvgTAT,AvgWTAT=hpf.HPF(processes)
+contextSwitching=0
+NewProcesses,AvgTAT,AvgWTAT=hpf.HPF(processes,contextSwitching)
+OutputFile(NewProcesses,AvgTAT,AvgWTAT)
 print(AvgTAT)
 print(len(NewProcesses))
+
+#output file + graph
 

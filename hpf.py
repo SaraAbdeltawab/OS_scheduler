@@ -20,7 +20,7 @@ def getArrivedProcesses(processes,time): #assume processes are sorted with arriv
     
 
 
-def HPF(processes):
+def HPF(processes,contextSwitching):
     i=0
     TotalTAT=0
     TotalWTAT=0
@@ -31,15 +31,15 @@ def HPF(processes):
             i+= (processes[0].arrivalTime-i)
         else:
             arrived= getArrivedProcesses(processes,i)
-            arrived.sort(key=attrgetter('ID'))
-            arrived.sort(key=attrgetter('priority'),reverse=True)
+            arrived.sort(key=attrgetter('ID')) # sort on secandry key first 
+            arrived.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
             proc=arrived[0]
-            proc.WT= i-proc.arrivalTime
+            proc.WT= i-proc.arrivalTime + contextSwitching
             proc.TAT=proc.burstTime+proc.WT
             proc.WTAT = float(proc.TAT)/proc.burstTime
             TotalTAT+= proc.TAT
             TotalWTAT+=proc.WTAT
-            i+=proc.burstTime
+            i+=proc.burstTime + contextSwitching
             processes.remove(proc)
             NewProcesses.append(proc)
     AvgTAT= float(TotalTAT)/len(NewProcesses)
