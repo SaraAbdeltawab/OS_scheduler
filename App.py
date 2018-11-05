@@ -12,6 +12,8 @@ from matplotlib.figure import Figure
 import tkinter as tk
 from pathlib import Path
 
+import hpf 
+
 #takes an entry as a parameter 
 #check if it is a number
 def is_float(x):
@@ -108,9 +110,12 @@ class App(object):
         if not self.CheckInputs():
             return
         
-        schedulNumber = [1,2,3,1,5]
-        startTime = [5,10,20,30,40]
-        endTime = [9,20,25,40,100]
+        myAlgo=hpf.HPF(self.fileName.get(),float(self.contextSwitchingTime.get()))
+        schedulNumber,startTime,endTime=myAlgo.GetStatsData()
+        
+#        schedulNumber = [1,2,3,1,5]
+#        startTime = [5,10,20,30,40]
+#        endTime = [9,20,25,40,100]
         self.CreateGraph(schedulNumber,startTime,endTime, "HPF")
         
     def RunFCFS(self):
