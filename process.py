@@ -14,6 +14,7 @@ class Process:
         self.WT=0    #waiting time                 #start-Arrival
         self.TAT=0   #turnaround time              #finish - arrival =burst+waiting
         self.WTAT=0  #weighted turnaround time     #TAT/burst
+        self.remaingBurstTime=bursttime  
         
         
     #operator overloading of less than operator    

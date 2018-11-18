@@ -10,9 +10,11 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 from matplotlib.figure import Figure
 import tkinter as tk
+import numpy as np
 from pathlib import Path
 
 import hpf 
+import srtn
 
 #takes an entry as a parameter 
 #check if it is a number
@@ -31,7 +33,7 @@ class App(object):
     def CreateWindow(self):
         
         self.master.title('Scheduling')
-        self.master.geometry("900x600")
+        self.master.geometry("1000x700")
         
         self.rootFrame = tk.Frame(master=self.master)
         self.rootFrame.grid(row='0',column='0')
@@ -140,10 +142,12 @@ class App(object):
         
         if not self.CheckInputs():
             return
-            
-        schedulNumber = [1,2,3,1,5]
-        startTime = [5,10,20,30,40]
-        endTime = [9,20,25,40,100]
+        myAlgo=srtn.SRTN(self.fileName.get(),float(self.contextSwitchingTime.get()))
+        schedulNumber,startTime,endTime=myAlgo.GetStatsData()
+       # schedulNumber = [1,2,3,1,5]
+       # startTime = [5,10,20,30,40]
+        #endTime = [9,20,25,40,100]
+        print("no: " , schedulNumber , " st: ", startTime, " ET: ",endTime )
         self.CreateGraph(schedulNumber,startTime,endTime, "STRN")
         
     def RunRR(self):
@@ -172,37 +176,39 @@ class App(object):
         
     def CreateGraph(self, schedulNumber, startTime, endTime, algoName):
         
-        fig = plt.figure(figsize = (5,5), dpi = 100) #??
-        ax1= fig.add_subplot(1,1,1) #??
-        #xs = [6,6,8,8,10,10,11,11,13]
-        #ys = [0,1,1,2,2,0,0,3,3]
+        fig = plt.figure(figsize = (7,7), dpi = 100) 
+        ax1= fig.add_subplot(1,1,1)
         xs = []
         ys = []
-        xs.append(startTime[0])
+        xs.append(startTime[0]/1000.0)
         ys.append(0)
-        print('xs: ', xs)
-        print('ys: ', ys)
-        for i in range (len(schedulNumber)):#?? len walla len-1 ??
+        for i in range (len(schedulNumber)):
             if i != 0 and startTime[i] != endTime[i-1]: 
                 ys.append(0)
                 ys.append(0)
-                xs.append(endTime[i-1])
-                xs.append(startTime[i])
+                xs.append(endTime[i-1]/1000.0)
+                xs.append(startTime[i]/1000.0)
                     
             ys.append(schedulNumber[i])
             ys.append(schedulNumber[i])
-            xs.append(startTime[i])
-            xs.append(endTime[i])
+            xs.append(startTime[i]/1000.0)
+            xs.append(endTime[i]/1000.0)
         ys.append(0)
-        xs.append(endTime[len(schedulNumber)-1])
+        xs.append(endTime[len(schedulNumber)-1]/1000.0)
         
         ax1.clear()
+        #ax1.set_yticks(ys, minor=True)
+        plt.xticks(xs)
+        plt.yticks(ys)
         ax1.plot(xs,ys)
+        fig.autofmt_xdate()
+        
+        for i in ax1.get_xticklabels():
+            i.set_fontsize('small')
 
         self.canvas = FigureCanvasTkAgg(fig, self.master) #,self
         self.canvas.show() #??
         self.canvas.get_tk_widget().grid(row = '0', column = '5')
-        print('endof create graph')
       
         self.toolbar_frame = tk.Frame(self.master)
         self.toolbar_frame.grid(row=21,column=4,columnspan=2)
@@ -212,7 +218,7 @@ class App(object):
         #canvas._tkcanvas.grid(row='7',column='3')
         
         plt.ylabel('Process number')
-        plt.xlabel('Running time')
+        plt.xlabel('Running time in seconds')
         plt.title(algoName)
         plt.show()
        
