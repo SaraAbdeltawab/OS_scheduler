@@ -7,7 +7,6 @@ import scheduler
 
 class SRTN:
     def __init__(self,inputfile,contextswitching):
-        self.time = 0
         self.readyProcesses = [] #sorted list of all processes in ready state
         self.processes = scheduler.ReadFile(inputfile)
         self.contextSwitching = int(1000*contextswitching)
@@ -33,41 +32,43 @@ class SRTN:
         currentTime=0
         totalTAT=0
         totalWTAT=0
-        tempProcesses= []
-        previousProcess = process.Process(0,0,0,0)
-        currentProcess = process.Process(0,0,0,0)
+        executedProcesses= [] #all executed processes
+        previousProcess = process.Process(-1,0,0,0)
+        currentProcess = 0
         while (len(self.processes)>0 or len(self.readyProcesses)>0):
+            
             self.GetArrivedProcesses(currentTime)
-            if len(self.readyProcesses) == 0:
+            
+            if len(self.readyProcesses) == 0: #no new process arrived
                 currentTime+=1
                 continue
-            #23mlha  lw 2t7at 7aga gdeda ??
+            self.readyProcesses.sort(key=attrgetter('remaingBurstTime','ID'))
             currentProcess = self.readyProcesses[0]
+            
             if previousProcess.ID != currentProcess.ID: #running a new process
-                currentTime += self.contextSwitching #assume there is switching time before running fist process  # we ana b3ml switch wa7da tanya tegy ?!!
+                currentTime += self.contextSwitching #assume there is switching time before running fist process
                 self.procNo.append(currentProcess.ID)
                 self.startTimes.append(currentTime)
-                #change this condition ??
-                if previousProcess.ID != 0: self.endTimes.append(currentTime) #endTime of the previous process
+                if previousProcess.ID != -1: self.endTimes.append(currentTime) #endTime of the previous process
+                
             currentTime+=1
             self.readyProcesses[0].remaingBurstTime -= 1
             currentProcess = self.readyProcesses[0]
+            
             if currentProcess.remaingBurstTime == 0: #process finished executing
                 currentProcess.WT = currentTime-currentProcess.arrivalTime-currentProcess.burstTime
                 currentProcess.TAT = currentTime-currentProcess.arrivalTime #finish - arrival
                 currentProcess.WTAT = float(currentProcess.TAT)/currentProcess.burstTime
-                
                 totalTAT+= currentProcess.TAT
                 totalWTAT+=currentProcess.WTAT
     
-                tempProcesses.append(currentProcess)
+                executedProcesses.append(currentProcess)
                 self.readyProcesses.pop(0) #remove from ready queue
-               # print("proc: ", self.processes, " readyProcesses " , self.readyProcesses)
-                        
+                                       
             previousProcess = currentProcess
             
         self.endTimes.append(currentTime) #end time of last process
-        self.processes=tempProcesses
+        self.processes=executedProcesses
         self.avgTAT= float(totalTAT)/len(self.processes)
         self.avgWTAT= float(totalWTAT)/len(self.processes)
         

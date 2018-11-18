@@ -2,22 +2,20 @@
 """
 Created on Mon Nov  5 10:50:42 2018
 
-@author: user
+@author: Sara
 """
 
 from matplotlib import pyplot as plt
-#matplotlib.use("TkAgg")
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
-from matplotlib.figure import Figure
 import tkinter as tk
-import numpy as np
 from pathlib import Path
-
 import hpf 
 import srtn
+import fcfs
 
-#takes an entry as a parameter 
-#check if it is a number
+"""
+check if the passed parameter is a number
+"""
 def is_float(x):
     try:
         float(x.get())
@@ -29,7 +27,7 @@ class App(object):
     def __init__(self, master):
         self.master = master
         self.CreateWindow()
-        #self.create_graph(schedulNumber, startTime, endTime)
+        
     def CreateWindow(self):
         
         self.master.title('Scheduling')
@@ -38,6 +36,11 @@ class App(object):
         self.rootFrame = tk.Frame(master=self.master)
         self.rootFrame.grid(row='0',column='0')
         
+        self.CreateEntries()
+        self.CreateButtons()
+        self.CreateErrorMsg()
+    
+    def CreateEntries(self):
         self.frame1 = tk.Frame(master=self.rootFrame, pady='15', padx='50')
         self.frame1.grid(row='0',column='0')
 
@@ -53,7 +56,10 @@ class App(object):
         self.contextSwitchingTime = tk.Entry(master = self.frame1, bd = 4, )
         self.contextSwitchingTime.grid(row='2', column='1')
         
+        self.timeLbl = tk.Label(master = self.frame1, text = "Time in millisec")
+        self.timeLbl.grid(row='2', column='2')
         
+    def CreateButtons(self):   
         self.frame2 =  tk.Frame(master=self.rootFrame, pady='50', padx='50')
         self.frame2.grid(row='3',column='0')
         
@@ -88,9 +94,14 @@ class App(object):
         self.timeQuantumBtn.grid(row='1',column='3')
         self.timeQuantumBtn.grid_remove()
         
+    def CreateErrorMsg(self):
         self.errorMsgLbl = tk.Label(master=self.frame3, text='Please double check all required inputs', foreground='red')
         self.errorMsgLbl.grid(row='2',column='1')
         self.errorMsgLbl.grid_remove()
+        
+        self.fileErrorMsgLbl = tk.Label(master=self.frame3, text='File not find', foreground='red')
+        self.fileErrorMsgLbl.grid(row='2',column='1')
+        self.fileErrorMsgLbl.grid_remove()
         
     def CheckInputs(self):
         if self.fileName.get() == "" or self.contextSwitchingTime.get() == "" or not is_float(self.contextSwitchingTime): 
@@ -99,55 +110,44 @@ class App(object):
         
         file = Path(self.fileName.get())
         if not file.is_file():
-            self.errorMsgLbl.grid()
+            self.fileErrorMsgLbl.grid()
             return False
         return True
-        
-    def RunHPF(self):
+    
+    def InitializeWindow(self):
         self.timeQuantumLbl.grid_remove()
         self.timeQuantum.grid_remove()
         self.timeQuantumBtn.grid_remove()
         self.errorMsgLbl.grid_remove()
-        
+    
+    def RunHPF(self):
+        self.InitializeWindow()
         if not self.CheckInputs():
             return
         
         myAlgo=hpf.HPF(self.fileName.get(),float(self.contextSwitchingTime.get()))
         schedulNumber,startTime,endTime=myAlgo.GetStatsData()
-        
-#        schedulNumber = [1,2,3,1,5]
-#        startTime = [5,10,20,30,40]
-#        endTime = [9,20,25,40,100]
+
         self.CreateGraph(schedulNumber,startTime,endTime, "HPF")
         
     def RunFCFS(self):
-        self.timeQuantumLbl.grid_remove()
-        self.timeQuantum.grid_remove()
-        self.timeQuantumBtn.grid_remove()
-        self.errorMsgLbl.grid_remove()
-            
+        self.InitializeWindow()
         if not self.CheckInputs():
             return
         
-        schedulNumber = [1,2,3,1,5]
-        startTime = [5,10,20,30,40]
-        endTime = [9,20,25,40,100]
+        RunAlgo=fcfs.FCFS(self.fileName.get(),float(self.contextSwitchingTime.get()))
+        schedulNumber,startTime,endTime=RunAlgo.GetStatsData()
+
         self.CreateGraph(schedulNumber,startTime,endTime, "FCFS")
         
     def RunSTRN(self):
-        self.timeQuantumLbl.grid_remove()
-        self.timeQuantum.grid_remove()
-        self.timeQuantumBtn.grid_remove()
-        self.errorMsgLbl.grid_remove()
-        
+        self.InitializeWindow()
         if not self.CheckInputs():
             return
-        myAlgo=srtn.SRTN(self.fileName.get(),float(self.contextSwitchingTime.get()))
-        schedulNumber,startTime,endTime=myAlgo.GetStatsData()
-       # schedulNumber = [1,2,3,1,5]
-       # startTime = [5,10,20,30,40]
-        #endTime = [9,20,25,40,100]
-        print("no: " , schedulNumber , " st: ", startTime, " ET: ",endTime )
+        
+        RunAlgo=srtn.SRTN(self.fileName.get(),float(self.contextSwitchingTime.get()))
+        schedulNumber,startTime,endTime=RunAlgo.GetStatsData()
+        
         self.CreateGraph(schedulNumber,startTime,endTime, "STRN")
         
     def RunRR(self):
@@ -175,7 +175,6 @@ class App(object):
         self.timeQuantumBtn.grid()
         
     def CreateGraph(self, schedulNumber, startTime, endTime, algoName):
-        
         fig = plt.figure(figsize = (7,7), dpi = 100) 
         ax1= fig.add_subplot(1,1,1)
         xs = []
@@ -197,25 +196,25 @@ class App(object):
         xs.append(endTime[len(schedulNumber)-1]/1000.0)
         
         ax1.clear()
-        #ax1.set_yticks(ys, minor=True)
-        plt.xticks(xs)
-        plt.yticks(ys)
+        #ax1.set_xticks(xs, minor=True) #view all ticks on x-axis
+        plt.xticks(xs) #view all values
+        plt.yticks(ys) #view all values
         ax1.plot(xs,ys)
-        fig.autofmt_xdate()
+        plt.xticks(rotation=90)
+
+        #fig.autofmt_xdate() #make  oblique labels
         
         for i in ax1.get_xticklabels():
-            i.set_fontsize('small')
+            i.set_fontsize('small') #labels font
 
-        self.canvas = FigureCanvasTkAgg(fig, self.master) #,self
+        self.canvas = FigureCanvasTkAgg(fig, self.master)
         self.canvas.show() #??
         self.canvas.get_tk_widget().grid(row = '0', column = '5')
       
         self.toolbar_frame = tk.Frame(self.master)
         self.toolbar_frame.grid(row=21,column=4,columnspan=2)
         self.toolbar = NavigationToolbar2TkAgg( self.canvas, self.toolbar_frame )
-        #toolbar = NavigationToolbar2TkAgg(canvas, window) #,self
         self.toolbar.update()
-        #canvas._tkcanvas.grid(row='7',column='3')
         
         plt.ylabel('Process number')
         plt.xlabel('Running time in seconds')

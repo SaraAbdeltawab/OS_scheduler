@@ -1,59 +1,59 @@
 # -*- coding: utf-8 -*-
 
-#import process as pr
 from operator import attrgetter
 import scheduler 
+
 class FCFS:
     def __init__(self,inputfile,contextswitching):
+        self.readyProcesses = [] #sorted list of all processes in ready state
         self.processes = scheduler.ReadFile(inputfile)
         self.contextSwitching = int(1000*contextswitching)
         self.procNo=[]
         self.startTimes=[]
         self.endTimes=[]
         self.FCFSAlgorithm()
-        scheduler.OutputFile(self.Processes,self.AvgTAT,self.AvgWTAT)
+        scheduler.OutputFile(self.processes,self.avgTAT,self.avgWTAT)
         
             
-    def GetArrivedProcesses(self,time): #assume processes are sorted with arrival time
+    def GetArrivedProcesses(self,time):
         self.processes.sort() # sorted by arrival time
-        arrived=[]
         i=0
-        while(i<len(self.processes) and self.processes[i].arrivalTime<=time):
-            arrived.append(self.processes[i])
+        while(i<len(self.processes) and self.processes[i].arrivalTime <= time):
+            self.readyProcesses.append(self.processes[i])
+            self.processes.pop(i) 
             i+=1
-        return arrived
         
-    
     def GetStatsData(self):
         return self.procNo ,self.startTimes,self.endTimes
-    
     
     def FCFSAlgorithm(self):
         currentTime=0
         totalTAT=0
         totalWTAT=0
-        arrivedProcesses=[] #sorted list of all processes arrived at time <= currentTime
-        tempProcesses=[]
-        while (len(self.processes)>0):
-            arrived = self.GetArrivedProcesses(currentTime)
-            arrivedProcesses.extend(arrived) 
-            arrived.sort(key=attrgetter('ID')) # sort on secandry key first 
-            arrived.sort(key=attrgetter('arrivalTime')) # 23ml l sort marra wa7da ??
-            currentProcess = arrived[0]
-            self.procNo.append(currentProcess.ID)
+        executedProcesses= [] #all executed processes
+        while (len(self.processes)>0 or len(self.readyProcesses)>0):
+            self.GetArrivedProcesses(currentTime) #after each process check the arrival of new process 
+            
+            if len(self.readyProcesses) == 0: #no new process arrived
+                currentTime+=1
+                continue
+            
+            self.readyProcesses.sort(key=attrgetter('arrivalTime','ID')) #sort by arrivalTime and ID
+            currentProcess = self.readyProcesses[0]
             currentTime += self.contextSwitching #assume there is switching time before running fist process
+            self.procNo.append(currentProcess.ID)
             self.startTimes.append(currentTime)
             currentProcess.WT = currentTime-currentProcess.arrivalTime    #start - arrival
             currentProcess.TAT = currentProcess.burstTime+currentProcess.WT
             currentProcess.WTAT = float(currentProcess.TAT)/currentProcess.burstTime
             totalTAT+= currentProcess.TAT
             totalWTAT+= currentProcess.WTAT
-            currentTime+= currentProcess.burstTime
-            self.endTimes.append(currentTime)
-            self.processes.remove(currentProcess)
-            tempProcesses.append(currentProcess)
+            currentTime+= currentProcess.burstTime 
+            self.endTimes.append(currentTime) #processes finished execusion
+            executedProcesses.append(currentProcess)
+            self.readyProcesses.pop(0) #remove from ready queue
             
-        self.processes=tempProcesses
+        self.processes=executedProcesses
         self.avgTAT= float(totalTAT)/len(self.processes)
         self.avgWTAT= float(totalWTAT)/len(self.processes)
         
