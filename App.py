@@ -119,6 +119,7 @@ class App(object):
         self.timeQuantum.grid_remove()
         self.timeQuantumBtn.grid_remove()
         self.errorMsgLbl.grid_remove()
+        self.fileErrorMsgLbl.grid_remove()
     
     def RunHPF(self):
         self.InitializeWindow()
@@ -152,6 +153,7 @@ class App(object):
         
     def RunRR(self):
         self.errorMsgLbl.grid_remove()
+        self.fileErrorMsgLbl.grid_remove()
         
         if not self.CheckInputs():
             return
