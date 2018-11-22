@@ -11,8 +11,8 @@ from operator import attrgetter
 gen=pg.Generator("input.txt")
 #gen.Processes.sort(key=attrgetter('priority'),reverse=True)  # this one works alone i think cause sort is stable
 #gen.Processes.sort(key=attrgetter('priority','ID'),reverse=True) #sort by priority then ID but this would reverse the id also
-gen.Processes.sort(key=attrgetter('ID')) # sort on secandry key first 
-gen.Processes.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
-gen.Processes.sort() #sort by arrival time
-for i in range (gen.n):
-    print (gen.Processes[i])
+#gen.Processes.sort(key=attrgetter('ID')) # sort on secandry key first 
+#gen.Processes.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
+#gen.Processes.sort() #sort by arrival time
+#for i in range (gen.n):
+#    print (gen.Processes[i])

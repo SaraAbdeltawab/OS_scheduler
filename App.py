@@ -12,6 +12,7 @@ from pathlib import Path
 import hpf 
 import srtn
 import fcfs
+import rr
 
 """
 check if the passed parameter is a number
@@ -162,9 +163,11 @@ class App(object):
             self.errorMsgLbl.grid()
             return
         
-        schedulNumber = [1,2,3,1,5]
-        startTime = [5,10,20,30,40]
-        endTime = [9,20,25,40,100]
+#        schedulNumber = [1,2,3,1,5]
+#        startTime = [5,10,20,30,40]
+#        endTime = [9,20,25,40,100]
+        myAlgo=rr.RR(self.fileName.get(),float(self.contextSwitchingTime.get()),float(self.timeQuantum.get()))
+        schedulNumber,startTime,endTime=myAlgo.GetStatsData()
         print('b4 call graph, RUN RR')
         self.CreateGraph(schedulNumber,startTime,endTime, "RR")
         print('after call graph, RUN RR')

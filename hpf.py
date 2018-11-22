@@ -37,8 +37,8 @@ class HPF:
         TotalTAT=0
         TotalWTAT=0
         NewProcesses=[]
+        self.Processes.sort() # sorted by arrival time
         while (len(self.Processes)>0 or len(self.arrived)>0):
-            self.Processes.sort() # sorted by arrival time
             self.GetArrivedProcesses(i)
             if len(self.arrived)==0:
                 i+=1
