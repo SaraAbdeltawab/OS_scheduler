@@ -43,10 +43,10 @@ class Generator:
   
     def GenerateProcesses(self):
         for i in range (self.n):
-            arrival = np.random.normal(self.mio1,self.sd1)
-            burst = np.random.normal(self.mio2,self.sd2)
+            arrival = abs(np.random.normal(self.mio1,self.sd1))
+            burst = abs(np.random.normal(self.mio2,self.sd2))
             priority = np.random.poisson(self.lamda)
-            self.Processes.append(pr.Process(i,arrival,burst,priority))
+            self.Processes.append(pr.Process(i+1,arrival,burst,priority))
             
        
     def OutputFile (self):
