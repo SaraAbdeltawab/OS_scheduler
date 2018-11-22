@@ -12,6 +12,7 @@ class HPF:
     def __init__(self,inputfile,contextswitching):
         self.Processes = scheduler.ReadFile(inputfile)
         self.contextSwitching = int(1000*contextswitching)
+        self.arrived=[]
         self.procNo=[]
         self.startTimes=[]
         self.endTimes=[]
@@ -20,12 +21,11 @@ class HPF:
         
             
     def GetArrivedProcesses(self,time): #assume processes are sorted with arrival time
-        arrived=[]
         i=0
         while(i<len(self.Processes) and self.Processes[i].arrivalTime<=time):
-            arrived.append(self.Processes[i])
+            self.arrived.append(self.Processes[i])
+            self.Processes.remove(self.Processes[i])
             i+=1
-        return arrived
         
     
     def GetStatsData(self):
@@ -37,15 +37,16 @@ class HPF:
         TotalTAT=0
         TotalWTAT=0
         NewProcesses=[]
-        while (len(self.Processes)>0):
+        while (len(self.Processes)>0 or len(self.arrived)>0):
             self.Processes.sort() # sorted by arrival time
-            if (self.Processes[0].arrivalTime > i):
-                i+= (self.Processes[0].arrivalTime-i)
+            self.GetArrivedProcesses(i)
+            if len(self.arrived)==0:
+                i+=1
+                
             else:
-                arrived= self.GetArrivedProcesses(i)
-                arrived.sort(key=attrgetter('ID')) # sort on secandry key first 
-                arrived.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
-                proc=arrived[0]
+                self.arrived.sort(key=attrgetter('ID')) # sort on secandry key first 
+                self.arrived.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
+                proc=self.arrived[0]
                 self.procNo.append(proc.ID)
                 i+=self.contextSwitching
                 self.startTimes.append(i)
@@ -56,7 +57,7 @@ class HPF:
                 TotalWTAT+=proc.WTAT
                 i+=proc.burstTime
                 self.endTimes.append(i)
-                self.Processes.remove(proc)
+                self.arrived.remove(proc)
                 NewProcesses.append(proc)
         self.Processes=NewProcesses
         

@@ -26,7 +26,7 @@ class Process:
     
     #operator overloading for printing process
     def __str__(self):
-       return str(self.arrivalTime) +" "+str(self.burstTime)+ " "+str(self.priority)+"\n"
+       return str(self.ID)+" "+str(self.arrivalTime) +" "+str(self.burstTime)+ " "+str(self.priority)+"\n"
     
     # def __str__(self):
     #     return str(self.arrivalTime) +" "+str(self.burstTime)+ " "+str(self.priority)+" "+str(self.WT)+" "+str(self.TAT)+" "+str(self.WTAT)+"\n"
