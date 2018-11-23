@@ -38,28 +38,39 @@ class HPF:
         TotalWTAT=0
         NewProcesses=[]
         self.Processes.sort() # sorted by arrival time
-        while (len(self.Processes)>0 or len(self.arrived)>0):
+        running =False
+        while (len(self.Processes)>0 or len(self.arrived)>0 or running):
             self.GetArrivedProcesses(i)
-            if len(self.arrived)==0:
+            if len(self.arrived)==0 and running ==False:
                 i+=1
                 
             else:
-                self.arrived.sort(key=attrgetter('ID')) # sort on secandry key first 
-                self.arrived.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
-                proc=self.arrived[0]
-                self.procNo.append(proc.ID)
-                i+=self.contextSwitching
-                self.startTimes.append(i)
-                proc.SetTimes(i) #i is start time
-                TotalTAT+= proc.TAT
-                TotalWTAT+=proc.WTAT
-                i+=proc.burstTime
-                self.endTimes.append(i)
-                self.arrived.remove(proc)
-                NewProcesses.append(proc)
+                if running==False:
+                    #take new process
+                    self.arrived.sort(key=attrgetter('ID')) # sort on secandry key first 
+                    self.arrived.sort(key=attrgetter('priority'),reverse=True) #then on primary key descending
+                    proc=self.arrived[0]
+                    self.arrived.remove(proc)
+                    running=True
+                    self.procNo.append(proc.ID)
+                    i+=self.contextSwitching
+                    self.startTimes.append(i)
+                    proc.SetTimes(i) #i is start time
+                    proc.remaingBurstTime-=1
+                    i+=1
+                else: #running=true
+                    i+=1
+                    proc.remaingBurstTime-=1
+               
+                if proc.remaingBurstTime==0:
+                    TotalTAT+= proc.TAT
+                    TotalWTAT+=proc.WTAT
+                    self.endTimes.append(i)
+                    running=False
+                    NewProcesses.append(proc)
         self.Processes=NewProcesses
         
-        self.AvgTAT= float(TotalTAT)/len(NewProcesses)
-        self.AvgWTAT= float(TotalWTAT)/len(NewProcesses)
+        self.AvgTAT= float(TotalTAT)/len(self.Processes)
+        self.AvgWTAT= float(TotalWTAT)/len(self.Processes)
         
             
