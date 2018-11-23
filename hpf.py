@@ -10,21 +10,21 @@ from operator import attrgetter
 import scheduler 
 class HPF:
     def __init__(self,inputfile,contextswitching):
-        self.Processes = scheduler.ReadFile(inputfile)
+        self.processes = scheduler.ReadFile(inputfile)
         self.contextSwitching = int(1000*contextswitching)
         self.arrived=[]
         self.procNo=[]
         self.startTimes=[]
         self.endTimes=[]
         self.HPFAlgorithm()
-        scheduler.OutputFile(self.Processes,self.AvgTAT,self.AvgWTAT)
+        scheduler.OutputFile(self.processes,self.avgTAT,self.avgWTAT)
         
             
     def GetArrivedProcesses(self,time): #assume processes are sorted with arrival time
         i=0
-        while(i<len(self.Processes) and self.Processes[i].arrivalTime<=time):
-            self.arrived.append(self.Processes[i])
-            self.Processes.remove(self.Processes[i])
+        while(i<len(self.processes) and self.processes[i].arrivalTime<=time):
+            self.arrived.append(self.processes[i])
+            self.processes.remove(self.processes[i])
             i+=1
         
     
@@ -34,12 +34,12 @@ class HPF:
     
     def HPFAlgorithm(self):
         i=0
-        TotalTAT=0
-        TotalWTAT=0
-        NewProcesses=[]
-        self.Processes.sort() # sorted by arrival time
+        totalTAT=0
+        totalWTAT=0
+        newProcesses=[]
+        self.processes.sort() # sorted by arrival time
         running =False
-        while (len(self.Processes)>0 or len(self.arrived)>0 or running):
+        while (len(self.processes)>0 or len(self.arrived)>0 or running):
             self.GetArrivedProcesses(i)
             if len(self.arrived)==0 and running ==False:
                 i+=1
@@ -63,14 +63,14 @@ class HPF:
                     proc.remaingBurstTime-=1
                
                 if proc.remaingBurstTime==0:
-                    TotalTAT+= proc.TAT
-                    TotalWTAT+=proc.WTAT
+                    totalTAT+= proc.TAT
+                    totalWTAT+=proc.WTAT
                     self.endTimes.append(i)
                     running=False
-                    NewProcesses.append(proc)
-        self.Processes=NewProcesses
+                    newProcesses.append(proc)
+        self.processes=newProcesses
         
-        self.AvgTAT= float(TotalTAT)/len(self.Processes)
-        self.AvgWTAT= float(TotalWTAT)/len(self.Processes)
+        self.avgTAT= float(totalTAT)/len(self.processes)
+        self.avgWTAT= float(totalWTAT)/len(self.processes)
         
             

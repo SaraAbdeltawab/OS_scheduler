@@ -8,22 +8,22 @@ Created on Tue Nov 20 22:46:35 2018
 import scheduler 
 class RR:
     def __init__(self,inputfile,contextswitching,quantum):
-        self.Processes = scheduler.ReadFile(inputfile)
+        self.processes = scheduler.ReadFile(inputfile)
         self.contextSwitching = int(1000*contextswitching)
-        self.Quantum = int(1000*quantum)
+        self.quantum = int(1000*quantum)
         self.arrived=[]
         self.procNo=[]
         self.startTimes=[]
         self.endTimes=[]
         self.RRAlgorithm()
-        scheduler.OutputFile(self.Processes,self.AvgTAT,self.AvgWTAT)
+        scheduler.OutputFile(self.processes,self.avgTAT,self.avgWTAT)
         
             
     def GetArrivedProcesses(self,time): #assume processes are sorted with arrival time
         i=0
-        while(i<len(self.Processes) and self.Processes[i].arrivalTime<=time):
-            self.arrived.append(self.Processes[i])
-            self.Processes.remove(self.Processes[i])
+        while(i<len(self.processes) and self.processes[i].arrivalTime<=time):
+            self.arrived.append(self.processes[i])
+            self.processes.remove(self.processes[i])
             i+=1
         
     
@@ -33,12 +33,12 @@ class RR:
     
     def RRAlgorithm(self):
         i=0
-        TotalTAT=0
-        TotalWTAT=0
-        NewProcesses=[]
-        self.Processes.sort() # sorted by arrival time
+        totalTAT=0
+        totalWTAT=0
+        newProcesses=[]
+        self.processes.sort() # sorted by arrival time
         quant=0
-        while (len(self.Processes)>0 or len(self.arrived)>0):
+        while (len(self.processes)>0 or len(self.arrived)>0):
             print("while loop bara")
             self.GetArrivedProcesses(i) #push them at the end
             if len(self.arrived)==0:
@@ -57,7 +57,7 @@ class RR:
                     print("quant =0")
                     
                     
-                elif quant==self.Quantum-1: #put process at the end of the queue
+                elif quant==self.quantum-1: #put process at the end of the queue
                     proc=self.arrived[0] #maza lw el burst time zero dan dan dan daaaan !!!
                     proc.remaingBurstTime -=1
                     i+=1
@@ -81,17 +81,17 @@ class RR:
                     #process finished
                     start=i-proc.burstTime
                     proc.SetTimes(start)
-                    TotalTAT+= proc.TAT
-                    TotalWTAT+=proc.WTAT
+                    totalTAT+= proc.TAT
+                    totalWTAT+=proc.WTAT
                     if quant != 0: 
                         self.endTimes.append(i) #process ended with the quantum value msh 3arfa 2keb comment meanigful
                     self.arrived.remove(proc) 
-                    NewProcesses.append(proc)
+                    newProcesses.append(proc)
                     quant=0
                     
                                 
-        self.Processes=NewProcesses
+        self.processes=newProcesses
         
-        self.AvgTAT= float(TotalTAT)/len(NewProcesses)
-        self.AvgWTAT= float(TotalWTAT)/len(NewProcesses)
+        self.avgTAT= float(totalTAT)/len(self.processes)
+        self.avgWTAT= float(totalWTAT)/len(self.processes)
         
