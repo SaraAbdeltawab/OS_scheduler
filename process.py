@@ -22,7 +22,10 @@ class Process:
         return self.arrivalTime < self.arrivalTime
     
     
-    
+    def SetTimes(self,startTime):
+        self.WT= startTime-self.arrivalTime    #start - arrival
+        self.TAT=self.burstTime+self.WT
+        self.WTAT = float(self.TAT)/self.burstTime
     
     #operator overloading for printing process
     def __str__(self):

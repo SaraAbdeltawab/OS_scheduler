@@ -50,9 +50,7 @@ class HPF:
                 self.procNo.append(proc.ID)
                 i+=self.contextSwitching
                 self.startTimes.append(i)
-                proc.WT= i-proc.arrivalTime    #start - arrival
-                proc.TAT=proc.burstTime+proc.WT
-                proc.WTAT = float(proc.TAT)/proc.burstTime
+                proc.SetTimes(i) #i is start time
                 TotalTAT+= proc.TAT
                 TotalWTAT+=proc.WTAT
                 i+=proc.burstTime

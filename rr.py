@@ -73,16 +73,18 @@ class RR:
                     quant+=1
                     print("quantum msh b 0 wla quantum")
                 
+                    
+                
                 print(str(proc.ID)+" "+str(proc.remaingBurstTime))
                     
                 if proc.remaingBurstTime ==0: 
                     #process finished
-                    proc.WT= i-proc.arrivalTime-proc.burstTime    
-                    proc.TAT=proc.burstTime+proc.WT
-                    proc.WTAT = float(proc.TAT)/proc.burstTime
+                    start=i-proc.burstTime
+                    proc.SetTimes(start)
                     TotalTAT+= proc.TAT
                     TotalWTAT+=proc.WTAT
-                    if quant != 0: self.endTimes.append(i) #process ended with the quantum value msh 3arfa 2keb comment meanigful
+                    if quant != 0: 
+                        self.endTimes.append(i) #process ended with the quantum value msh 3arfa 2keb comment meanigful
                     self.arrived.remove(proc) 
                     NewProcesses.append(proc)
                     quant=0
