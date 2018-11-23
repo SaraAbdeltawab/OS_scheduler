@@ -82,8 +82,8 @@ class RR:
                     proc.WTAT = float(proc.TAT)/proc.burstTime
                     TotalTAT+= proc.TAT
                     TotalWTAT+=proc.WTAT
-                    self.endTimes.append(i)
-                    self.arrived.remove(proc)
+                    if quant != 0: self.endTimes.append(i) #process ended with the quantum value msh 3arfa 2keb comment meanigful
+                    self.arrived.remove(proc) 
                     NewProcesses.append(proc)
                     quant=0
                     

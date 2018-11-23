@@ -57,7 +57,7 @@ class App(object):
         self.contextSwitchingTime = tk.Entry(master = self.frame1, bd = 4, )
         self.contextSwitchingTime.grid(row='2', column='1')
         
-        self.timeLbl = tk.Label(master = self.frame1, text = "Time in millisec")
+        self.timeLbl = tk.Label(master = self.frame1, text = "Time in sec")
         self.timeLbl.grid(row='2', column='2')
         
     def CreateButtons(self):   
@@ -163,12 +163,13 @@ class App(object):
             self.errorMsgLbl.grid()
             return
         
-#        schedulNumber = [1,2,3,1,5]
-#        startTime = [5,10,20,30,40]
-#        endTime = [9,20,25,40,100]
+        #schedulNumber = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 1]
+        #startTime = [2, 8, 14, 20, 26, 32, 38, 44, 50, 56, 62, 64, 66]
+        #endTime = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 64, 66, 72]
         myAlgo=rr.RR(self.fileName.get(),float(self.contextSwitchingTime.get()),float(self.timeQuantum.get()))
         schedulNumber,startTime,endTime=myAlgo.GetStatsData()
-        print('b4 call graph, RUN RR')
+        #print(schedulNumber, " statrt: ", startTime , " endTime: ", endTime)
+        #print('b4 call graph, RUN RR')
         self.CreateGraph(schedulNumber,startTime,endTime, "RR")
         print('after call graph, RUN RR')
          
