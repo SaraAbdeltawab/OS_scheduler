@@ -37,58 +37,52 @@ class RR:
         totalWTAT=0
         newProcesses=[]
         self.processes.sort() # sorted by arrival time
+        running =False
         quant=0
-        while (len(self.processes)>0 or len(self.arrived)>0):
-            print("while loop bara")
+        while (len(self.processes)>0 or len(self.arrived)>0 or running):
             self.GetArrivedProcesses(i) #push them at the end
-            if len(self.arrived)==0:
+            if len(self.arrived)==0 and running ==False:
                 i+=1
                 
             else:
-                proc=self.arrived[0] #######comment this
-                if quant==0:
+                if running==False:
+                    #take a process from ready queue
                     proc=self.arrived[0] #maza lw el burst time zero dan dan dan daaaan !!!
+                    self.arrived.remove(proc)
                     self.procNo.append(proc.ID)
                     i+=self.contextSwitching
                     self.startTimes.append(i)
                     proc.remaingBurstTime -=1
                     i+=1
                     quant+=1
-                    print("quant =0")
-                    
-                    
-                elif quant==self.quantum-1: #put process at the end of the queue
-                    proc=self.arrived[0] #maza lw el burst time zero dan dan dan daaaan !!!
-                    proc.remaingBurstTime -=1
-                    i+=1
-                    quant=0
-                    self.arrived.remove(proc) # here we remove it 
-                    #if proc.remaingBurstTime >0:
-                    self.arrived.append(proc) #push at the end
-                    self.endTimes.append(i)
-                    print("quant b quantum")
-                else:# if quant!=0 and != Quantum
+                    running=True
+                else: #running true   
                     proc.remaingBurstTime -=1
                     i+=1
                     quant+=1
-                    print("quantum msh b 0 wla quantum")
-                
                     
+                if quant==self.quantum: #put process at the end of the queue
+                    quant=0
+                    running=False
+                    if proc.remaingBurstTime >0 and len(self.arrived)==0:
+                        #keep running but with new quantum 
+                        #don't put in the queue to save context switching
+                        running=True
+                    elif proc.remaingBurstTime >0:
+                        self.arrived.append(proc) #push at the end
+                        self.endTimes.append(i)
+                    # if it is zero then  
                 
-                print(str(proc.ID)+" "+str(proc.remaingBurstTime))
-                    
                 if proc.remaingBurstTime ==0: 
                     #process finished
                     start=i-proc.burstTime
                     proc.SetTimes(start)
                     totalTAT+= proc.TAT
                     totalWTAT+=proc.WTAT
-                    if quant != 0: 
-                        self.endTimes.append(i) #process ended with the quantum value msh 3arfa 2keb comment meanigful
-                    self.arrived.remove(proc) 
+                    self.endTimes.append(i)
                     newProcesses.append(proc)
                     quant=0
-                    
+                    running=False
                                 
         self.processes=newProcesses
         
