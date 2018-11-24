@@ -38,7 +38,7 @@ class FCFS:
                 currentTime+=1
                 continue
             
-            self.readyProcesses.sort(key=attrgetter('arrivalTime','ID')) #sort by arrivalTime and ID
+            #self.readyProcesses.sort(key=attrgetter('arrivalTime','ID')) #sort by arrivalTime and ID
             currentProcess = self.readyProcesses[0]
             currentTime += self.contextSwitching #assume there is switching time before running fist process
             self.procNo.append(currentProcess.ID)
