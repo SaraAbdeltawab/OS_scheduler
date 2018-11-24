@@ -225,7 +225,7 @@ class App(object):
         plt.ylabel('Process number')
         plt.xlabel('Running time in seconds')
         plt.title(algoName)
-        plt.show()
+#        plt.show()
        
         
 root = tk.Tk()

@@ -1,0 +1,1 @@
+pyinstaller -F -w -i "D:\CUFE\3A\Operating Systems\PROJECT\FinalCOMPILE\image.ico" App.py                      
