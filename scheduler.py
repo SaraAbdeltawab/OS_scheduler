@@ -14,7 +14,7 @@ def ReadFile(inputfile):
         lines=fcontents.split("\n")
         n=int(lines[0])
         for i in range(1,n+1):
-            info=lines[i].split(" ")
+            info=lines[i].split()
             # assume that the read times are in seconds and the schedular works with milliseconds
             processes.append(pr.Process(int(info[0]),math.ceil(float(info[1])*1000),math.ceil(float(info[2])*1000),int(info[3]))) #id begins from 1
     processes.sort(key=attrgetter('ID'))
@@ -23,9 +23,9 @@ def ReadFile(inputfile):
 def OutputFile(Processes,AvgTAT,AvgWTAT):
     with open ("Stats/STATS.txt",'w') as wf:
         for i in range (len(Processes)):
-            wf.write(str(Processes[i].ID)+" "+str(float(Processes[i].WT)/1000)+" "+str(float(Processes[i].TAT)/1000)+" "+str(float(Processes[i].WTAT)/1000)+"\n")
+            wf.write(str(Processes[i].ID)+" "+str(float(Processes[i].WT)/1000)+" "+str(float(Processes[i].TAT)/1000)+" "+str(Processes[i].WTAT)+"\n")
         wf.write(str(float(AvgTAT)/1000)+"\n")
-        wf.write(str(float(AvgWTAT)/1000)+"\n")
+        wf.write(str(AvgWTAT)+"\n")
         
             
             

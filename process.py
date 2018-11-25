@@ -19,7 +19,7 @@ class Process:
         
     #operator overloading of less than operator    
     def __lt__(self, other):
-        return self.arrivalTime < self.arrivalTime
+        return self.arrivalTime < other.arrivalTime
     
     
     def SetTimes(self,startTime):
