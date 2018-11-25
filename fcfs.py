@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import scheduler 
-
+from operator import attrgetter
 class FCFS:
     def __init__(self,inputfile,contextswitching):
         self.readyProcesses = [] #sorted list of all processes in ready state
@@ -15,11 +15,10 @@ class FCFS:
         
             
     def GetArrivedProcesses(self,time):
-        i=0
-        while(i<len(self.processes) and self.processes[i].arrivalTime <= time):
-            self.readyProcesses.append(self.processes[i])
-            self.processes.pop(i) 
-            i+=1
+
+        while(self.processes and self.processes[0].arrivalTime <= time):
+            self.readyProcesses.append(self.processes[0])
+            self.processes.pop(0)
         
     def GetStatsData(self):
         return self.procNo ,self.startTimes,self.endTimes
@@ -29,9 +28,12 @@ class FCFS:
         totalTAT=0
         totalWTAT=0
         executedProcesses= [] #all executed processes
-        self.processes.sort() # sorted by arrival time
+        self.processes.sort() # sorted by arrival time #ID??
+        #for i in  range (len(self.processes)):
+        #    print(self.processes[i].arrivalTime)
+        #print(len(self.processes))
         running = False # Is there a running process
-        while (len(self.processes)>0 or len(self.readyProcesses)>0 or running):
+        while (self.processes or self.readyProcesses or running):
             self.GetArrivedProcesses(currentTime) #check the arrival of new process 
             
             if len(self.readyProcesses) == 0 and not running: #no running process or new process arrived
@@ -51,7 +53,6 @@ class FCFS:
                 
             runningProcess.burstTime -= 1
             currentTime+=1
-            print(runningProcess.burstTime)
             if runningProcess.burstTime == 0:
                 self.endTimes.append(currentTime) #process finished execusion
                 executedProcesses.append(runningProcess)

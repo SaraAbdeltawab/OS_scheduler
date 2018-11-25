@@ -173,7 +173,6 @@ class App(object):
         myAlgo=rr.RR(self.fileName.get(),float(self.contextSwitchingTime.get()),float(self.timeQuantum.get()))
         schedulNumber,startTime,endTime=myAlgo.GetStatsData()
         self.CreateGraph(schedulNumber,startTime,endTime, "RR")
-        print('after call graph, RUN RR')
          
     def ViewQuantum(self):
         self.errorMsgLbl.grid_remove()

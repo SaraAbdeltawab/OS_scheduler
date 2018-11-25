@@ -5,7 +5,7 @@ Created on Tue Nov 20 22:46:35 2018
 @author: hagar
 """
 
-import scheduler 
+import scheduler
 class RR:
     def __init__(self,inputfile,contextswitching,quantum):
         self.processes = scheduler.ReadFile(inputfile)
@@ -36,7 +36,7 @@ class RR:
         totalTAT=0
         totalWTAT=0
         newProcesses=[]
-        self.processes.sort() # sorted by arrival time
+        self.processes.sort()
         running =False
         quant=0
         while (len(self.processes)>0 or len(self.arrived)>0 or running):

@@ -14,7 +14,7 @@ def ReadFile(inputfile):
         lines=fcontents.split("\n")
         n=int(lines[0])
         for i in range(1,n+1):
-            info=lines[i].split(" ")
+            info=lines[i].split()
             # assume that the read times are in seconds and the schedular works with milliseconds
             processes.append(pr.Process(int(info[0]),math.ceil(float(info[1])*1000),math.ceil(float(info[2])*1000),int(info[3]))) #id begins from 1
     processes.sort(key=attrgetter('ID'))

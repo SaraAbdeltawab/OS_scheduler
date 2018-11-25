@@ -2,7 +2,6 @@
 
 #import process as pr
 from operator import attrgetter
-import process
 import scheduler 
 
 class SRTN:
@@ -68,7 +67,6 @@ class SRTN:
             runningProcess.remaingBurstTime -= 1
             
             if runningProcess.remaingBurstTime == 0: #process finished executing
-                print("sara:",  runningProcess.ID)
                 running = False
                 runningProcess.WT = currentTime-runningProcess.arrivalTime-runningProcess.burstTime
                 runningProcess.TAT = currentTime-runningProcess.arrivalTime #finish - arrival
