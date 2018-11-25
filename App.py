@@ -15,7 +15,7 @@ import fcfs
 import rr
 
 """
-check if the passed parameter is a number
+Takes an Entry and check if the passed it is a number
 """
 def is_float(x):
     try:
@@ -32,7 +32,7 @@ class App(object):
     def CreateWindow(self):
         
         self.master.title('Scheduling')
-        self.master.geometry("1000x700")
+        self.master.geometry("1200x800")
         
         self.rootFrame = tk.Frame(master=self.master)
         self.rootFrame.grid(row='0',column='0')
@@ -105,7 +105,10 @@ class App(object):
         self.fileErrorMsgLbl.grid_remove()
         
     def CheckInputs(self):
-        if self.fileName.get() == "" or self.contextSwitchingTime.get() == "" or not is_float(self.contextSwitchingTime): 
+        if self.fileName.get() == "" or self.contextSwitchingTime.get() == "" or not is_float(self.contextSwitchingTime):
+            self.errorMsgLbl.grid()
+            return False
+        if float(self.contextSwitchingTime.get()) < 0:
             self.errorMsgLbl.grid()
             return False
         
@@ -163,13 +166,12 @@ class App(object):
             self.errorMsgLbl.grid()
             return
         
-        #schedulNumber = [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 1, 1]
-        #startTime = [2, 8, 14, 20, 26, 32, 38, 44, 50, 56, 62, 64, 66]
-        #endTime = [6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 64, 66, 72]
+        if float(self.timeQuantum.get()) <= 0:
+            self.errorMsgLbl.grid()
+            return 
+        
         myAlgo=rr.RR(self.fileName.get(),float(self.contextSwitchingTime.get()),float(self.timeQuantum.get()))
         schedulNumber,startTime,endTime=myAlgo.GetStatsData()
-        #print(schedulNumber, " statrt: ", startTime , " endTime: ", endTime)
-        #print('b4 call graph, RUN RR')
         self.CreateGraph(schedulNumber,startTime,endTime, "RR")
         print('after call graph, RUN RR')
          
