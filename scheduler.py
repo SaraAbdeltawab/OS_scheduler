@@ -21,7 +21,7 @@ def ReadFile(inputfile):
     return processes
             
 def OutputFile(Processes,AvgTAT,AvgWTAT):
-    with open ("Stats/STATS.txt",'w') as wf:
+    with open ("STATS.txt",'w') as wf:
         for i in range (len(Processes)):
             wf.write(str(Processes[i].ID)+" "+str(float(Processes[i].WT)/1000)+" "+str(float(Processes[i].TAT)/1000)+" "+str(Processes[i].WTAT)+"\n")
         wf.write(str(float(AvgTAT)/1000)+"\n")
