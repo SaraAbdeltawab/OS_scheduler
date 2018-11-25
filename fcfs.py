@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from operator import attrgetter
 import scheduler 
 
 class FCFS:
@@ -16,7 +15,6 @@ class FCFS:
         
             
     def GetArrivedProcesses(self,time):
-        self.processes.sort() # sorted by arrival time
         i=0
         while(i<len(self.processes) and self.processes[i].arrivalTime <= time):
             self.readyProcesses.append(self.processes[i])
@@ -31,28 +29,34 @@ class FCFS:
         totalTAT=0
         totalWTAT=0
         executedProcesses= [] #all executed processes
-        while (len(self.processes)>0 or len(self.readyProcesses)>0):
-            self.GetArrivedProcesses(currentTime) #after each process check the arrival of new process 
+        self.processes.sort() # sorted by arrival time
+        running = False # Is there a running process
+        while (len(self.processes)>0 or len(self.readyProcesses)>0 or running):
+            self.GetArrivedProcesses(currentTime) #check the arrival of new process 
             
-            if len(self.readyProcesses) == 0: #no new process arrived
+            if len(self.readyProcesses) == 0 and not running: #no running process or new process arrived
                 currentTime+=1
                 continue
             
-            #self.readyProcesses.sort(key=attrgetter('arrivalTime','ID')) #sort by arrivalTime and ID
-            currentProcess = self.readyProcesses[0]
-            currentTime += self.contextSwitching #assume there is switching time before running fist process
-            self.procNo.append(currentProcess.ID)
-            self.startTimes.append(currentTime)
-            currentProcess.WT = currentTime-currentProcess.arrivalTime    #start - arrival
-            currentProcess.TAT = currentProcess.burstTime+currentProcess.WT
-            currentProcess.WTAT = float(currentProcess.TAT)/currentProcess.burstTime
-            totalTAT+= currentProcess.TAT
-            totalWTAT+= currentProcess.WTAT
-            currentTime+= currentProcess.burstTime 
-            self.endTimes.append(currentTime) #processes finished execusion
-            executedProcesses.append(currentProcess)
-            self.readyProcesses.pop(0) #remove from ready queue
-            
+            if not running:
+                runningProcess = self.readyProcesses[0]
+                running = True
+                self.readyProcesses.pop(0) #remove from ready queue
+                currentTime += self.contextSwitching #assume there is a full switching time before running fist process
+                self.procNo.append(runningProcess.ID)
+                self.startTimes.append(currentTime)
+                runningProcess.SetTimes(currentTime) #set WT,TAT, WTAT, 
+                totalTAT+= runningProcess.TAT
+                totalWTAT+= runningProcess.WTAT
+                
+            runningProcess.burstTime -= 1
+            currentTime+=1
+            print(runningProcess.burstTime)
+            if runningProcess.burstTime == 0:
+                self.endTimes.append(currentTime) #process finished execusion
+                executedProcesses.append(runningProcess)
+                running = False
+        
         self.processes=executedProcesses
         self.avgTAT= float(totalTAT)/len(self.processes)
         self.avgWTAT= float(totalWTAT)/len(self.processes)
