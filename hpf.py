@@ -21,11 +21,9 @@ class HPF:
         
             
     def GetArrivedProcesses(self,time): #assume processes are sorted with arrival time
-        i=0
-        while(i<len(self.processes) and self.processes[i].arrivalTime<=time):
-            self.arrived.append(self.processes[i])
-            self.processes.remove(self.processes[i])
-            i+=1
+        while(len(self.processes)>0 and self.processes[0].arrivalTime<=time):
+            self.arrived.append(self.processes[0])
+            self.processes.remove(self.processes[0])
         
     
     def GetStatsData(self):
